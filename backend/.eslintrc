@@ -11,13 +11,14 @@
   },
   "plugins": ["@typescript-eslint"],
   "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".ts", ".js", ".json"]
-      }
+      "import/resolver": {
+        "node": {
+          "extensions": [".ts", ".js", ".json"]
+        },
+        "typescript": {}
+      },
+      "import/extensions": [".js", ".ts"]
     },
-    "import/extensions": [".js", ".ts"]
-  },
   "rules": {
     "no-shadow": "off",
     "import/prefer-default-export": "off",

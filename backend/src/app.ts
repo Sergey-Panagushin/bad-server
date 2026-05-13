@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import 'dotenv/config'
 import express, { json, urlencoded } from 'express'
+import rateLimit from 'express-rate-limit'
 import mongoose from 'mongoose'
 import path from 'path'
 import { DB_ADDRESS } from './config'
@@ -12,7 +13,13 @@ import routes from './routes'
 
 const { PORT = 3000 } = process.env
 const app = express()
-
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: true,
+    legacyHeaders: false,
+})
+app.use(limiter)
 app.use(cookieParser())
 
 app.use(cors())
@@ -21,8 +28,8 @@ app.use(cors())
 
 app.use(serveStatic(path.join(__dirname, 'public')))
 
-app.use(urlencoded({ extended: true }))
-app.use(json())
+app.use(urlencoded({ extended: true, limit: '10kb' }))
+app.use(json({ limit: '10kb' }))
 
 app.options('*', cors())
 app.use(routes)
