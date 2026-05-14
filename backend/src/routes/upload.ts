@@ -4,6 +4,6 @@ import fileMiddleware from '../middlewares/file'
 import auth from '../middlewares/auth'
 
 const uploadRouter = Router()
-uploadRouter.post('/', auth, fileMiddleware.single('file'), uploadFile)
+uploadRouter.post('/', auth, fileMiddleware, uploadFile)
 
 export default uploadRouter

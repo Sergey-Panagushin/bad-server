@@ -206,7 +206,7 @@ const updateCurrentUser = async (
     }
 }
 
-const getCsrfToken = (req: Request, res: Response) => {
+const getCsrfToken = (_req: Request, res: Response) => {
     const csrfToken = crypto.randomBytes(32).toString('hex')
     res.cookie('_csrf', csrfToken, {
         httpOnly: false,
