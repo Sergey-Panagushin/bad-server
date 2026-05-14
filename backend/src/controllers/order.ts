@@ -32,9 +32,12 @@ export const getOrders = async (
 
         const filters: FilterQuery<Partial<IOrder>> = {}
 
+        const validStatuses = ['new', 'delivering', 'completed', 'cancelled']
         if (status) {
-            if (typeof status === 'string') {
+            if (typeof status === 'string' && validStatuses.includes(status)) {
                 filters.status = status
+            } else if (typeof status !== 'string') {
+                return next(new BadRequestError('Невалидный статус заказа'))
             }
         }
 

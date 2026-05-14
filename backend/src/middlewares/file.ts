@@ -45,15 +45,17 @@ const types = [
     'image/svg+xml',
 ]
 
+const allowedExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg']
+
 const fileFilter = (
     _req: Request,
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    if (!types.includes(file.mimetype)) {
+    const ext = extname(file.originalname).toLowerCase()
+    if (!types.includes(file.mimetype) || !allowedExtensions.includes(ext)) {
         return cb(new Error('Недопустимый тип файла'))
     }
-
     return cb(null, true)
 }
 
