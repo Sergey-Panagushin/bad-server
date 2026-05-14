@@ -64,24 +64,14 @@ export default function ProfileOrderDetail() {
                 label: 'Адрес доставки',
                 extraClass: styles.profile__gridRowFullWidth,
             },
-            {
-                key: 'comment',
-                label: 'Ваш комментарий к заказу',
-                extraClass: styles.profile__gridRowFullWidth,
-                render: (dataInfo: OrderData) => (
-                    <>
-                        {dataInfo.comment ? (
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: dataInfo.comment,
-                                }}
-                            />
-                        ) : (
-                            'Комментариев нет'
-                        )}
-                    </>
-                ),
-            },
+        {
+            key: 'comment',
+            label: 'Ваш комментарий к заказу',
+            extraClass: styles.profile__gridRowFullWidth,
+            render: (dataInfo: OrderData) => (
+                <div>{dataInfo.comment ? dataInfo.comment : 'Комментариев нет'}</div>
+            ),
+        },
         ],
         [orderData]
     )

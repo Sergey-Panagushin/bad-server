@@ -1,10 +1,13 @@
 import { Request, Express } from 'express'
 import multer, { FileFilterCallback } from 'multer'
 import { mkdirSync } from 'fs'
-import { join } from 'path'
+import { join, extname } from 'path'
+import { v4 as uuidv4 } from 'uuid'
 
 type DestinationCallback = (error: Error | null, destination: string) => void
 type FileNameCallback = (error: Error | null, filename: string) => void
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024
 
 const storage = multer.diskStorage({
     destination: (
@@ -29,7 +32,8 @@ const storage = multer.diskStorage({
         file: Express.Multer.File,
         cb: FileNameCallback
     ) => {
-        cb(null, file.originalname)
+        const ext = extname(file.originalname)
+        cb(null, uuidv4() + ext)
     },
 })
 
@@ -41,16 +45,24 @@ const types = [
     'image/svg+xml',
 ]
 
+const allowedExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.svg']
+
 const fileFilter = (
     _req: Request,
     file: Express.Multer.File,
     cb: FileFilterCallback
 ) => {
-    if (!types.includes(file.mimetype)) {
-        return cb(null, false)
+    const ext = extname(file.originalname).toLowerCase()
+    if (!types.includes(file.mimetype) || !allowedExtensions.includes(ext)) {
+        return cb(new Error('Недопустимый тип файла'))
     }
-
     return cb(null, true)
 }
 
-export default multer({ storage, fileFilter })
+export default multer({
+    storage,
+    fileFilter,
+    limits: {
+        fileSize: MAX_FILE_SIZE,
+    },
+}).single('file')
