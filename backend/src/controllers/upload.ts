@@ -1,8 +1,16 @@
 import { NextFunction, Request, Response } from 'express'
 import { constants } from 'http2'
+import { fileTypeFromFile } from 'file-type'
 import BadRequestError from '../errors/bad-request-error'
 
 const MIN_FILE_SIZE = 2 * 1024
+
+const ALLOWED_MIME_TYPES = [
+    'image/png',
+    'image/jpeg',
+    'image/gif',
+    'image/svg+xml',
+]
 
 export const uploadFile = async (
     req: Request,
@@ -18,6 +26,11 @@ export const uploadFile = async (
     }
 
     try {
+        const type = await fileTypeFromFile(req.file.path)
+        if (!type || !ALLOWED_MIME_TYPES.includes(type.mime)) {
+            return next(new BadRequestError('Недопустимый тип файла'))
+        }
+
         const fileName = process.env.UPLOAD_PATH
             ? `/${process.env.UPLOAD_PATH}/${req.file.filename}`
             : `/${req.file?.filename}`
